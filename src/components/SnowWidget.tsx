@@ -33,6 +33,25 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
         fetchData();
     }, [slug]);
 
+    // Broadcast Height to Parent (for Iframe Resizing)
+    useEffect(() => {
+        const sendHeight = () => {
+            if (typeof window !== 'undefined') {
+                const height = document.documentElement.scrollHeight;
+                window.parent.postMessage({ type: 'snow-widget-resize', height }, '*');
+            }
+        };
+
+        // Send initial
+        sendHeight();
+
+        // Observe changes
+        const observer = new ResizeObserver(sendHeight);
+        observer.observe(document.body);
+
+        return () => observer.disconnect();
+    }, [data, activeTab]); // Re-run when content changes
+
     if (loading && !data) return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 animate-pulse">
             Loading Conditions...
