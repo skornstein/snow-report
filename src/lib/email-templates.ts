@@ -1,0 +1,147 @@
+import { MountainData } from './types';
+
+// Simple HTML Email Generator
+// In a production app, we might use React Email, but string interpolation works fine for this structure.
+
+export function generateSingleResortEmail(data: MountainData): string {
+    const { mountain, snowReport, weather, liftsTerrain } = data;
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; line-height: 1.5; margin: 0; padding: 0; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+            .header { background-color: #ffffff; padding: 24px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+            .header img { height: 40px; margin-bottom: 8px; }
+            .header h1 { font-size: 16px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
+            .content { padding: 32px; }
+            .greeting { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
+            .hero-card { background-color: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; }
+            .temp { font-size: 36px; font-weight: 900; color: #0f172a; }
+            .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+            .stat-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; }
+            .stat-label { font-size: 12px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+            .stat-value { font-size: 20px; font-weight: 800; color: #2563eb; }
+            .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; }
+            .btn { display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 16px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png" alt="Logo">
+                <h1>Valley View Villa</h1>
+            </div>
+            <div class="content">
+                <div class="greeting">Good Morning! 🏔️</div>
+                <p>Here is your daily condition report for <strong>${mountain.name}</strong>.</p>
+                
+                <div class="hero-card">
+                    <div>
+                        <div class="temp">${Math.round(weather.currentTempF)}°F</div>
+                        <div style="font-weight: 600; color: #475569;">${weather.conditions}</div>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">24h Snow</div>
+                        <div class="stat-value">${snowReport.snow24hIn}"</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Base Depth</div>
+                        <div class="stat-value">${snowReport.baseDepthIn.max}"</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Trails Open</div>
+                        <div class="stat-value">${liftsTerrain.trailsOpen} / ${liftsTerrain.trailsTotal}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Lifts</div>
+                        <div class="stat-value">${liftsTerrain.liftsOpen} / ${liftsTerrain.liftsTotal}</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 14px; color: #475569;">${data.summary}</p>
+
+                <div style="text-align: center;">
+                    <a href="${mountain.url}" class="btn">View Full Report</a>
+                </div>
+            </div>
+            <div class="footer">
+                Sent with 💙 from Valley View Villa<br>
+                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}
+
+export function generateGenMultiResortEmail(resorts: MountainData[]): string {
+    // Sort by new snow
+    const sorted = [...resorts].sort((a, b) => b.snowReport.snow24hIn - a.snowReport.snow24hIn);
+    const winner = sorted[0];
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; line-height: 1.5; margin: 0; padding: 0; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+            .header { background-color: #ffffff; padding: 24px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+            .header img { height: 40px; margin-bottom: 8px; }
+            .header h1 { font-size: 16px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
+            .content { padding: 32px; }
+            .greeting { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
+            .resort-row { border-bottom: 1px solid #f1f5f9; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; }
+            .resort-row:last-child { border-bottom: none; }
+            .resort-name { font-weight: 800; text-transform: uppercase; font-size: 14px; color: #334155; }
+            .snow-badge { background-color: #eff6ff; color: #2563eb; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 13px; }
+            .winner-badge { background-color: #fbbf24; color: #78350f; }
+            .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png" alt="Logo">
+                <h1>Valley View Villa</h1>
+            </div>
+            <div class="content">
+                <div class="greeting">Powder Alert! 🚨</div>
+                <p>Fresh snow reported across the region. <strong>${winner.mountain.name}</strong> is the winner today with <strong>${winner.snowReport.snow24hIn}"</strong> overnight!</p>
+
+                <div style="margin-top: 24px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 16px;">
+                    ${sorted.map((r, i) => `
+                        <div class="resort-row">
+                            <div>
+                                <div class="resort-name">${r.mountain.name}</div>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                                    ${r.weather.conditions} • ${Math.round(r.weather.currentTempF)}°F
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="snow-badge ${i === 0 && r.snowReport.snow24hIn > 0 ? 'winner-badge' : ''}">
+                                    ${r.snowReport.snow24hIn}" New
+                                </span>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                                    ${r.liftsTerrain.trailsOpen}/${r.liftsTerrain.trailsTotal} Open
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="footer">
+                Sent with 💙 from Valley View Villa<br>
+                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}

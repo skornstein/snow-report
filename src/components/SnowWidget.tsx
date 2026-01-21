@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MountainData, LiftCondition, TrailCondition } from '@/lib/types';
-import { Wind, ChevronDown, ChevronUp, Snowflake, Map as MapIcon, CableCar } from 'lucide-react';
+import { Wind, ChevronDown, ChevronUp, Snowflake, Map as MapIcon, CableCar, Sun, Cloud, CloudSun, CloudRain, CloudSnow, Clock, Ruler, Calendar, Mountain } from 'lucide-react';
 
 export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug?: string }) {
     const [slug, setSlug] = useState(defaultSlug);
@@ -73,24 +73,30 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     const sortedTrails = sortData(liftsTerrain.trails);
 
     return (
-        <div className="bg-slate-100 min-h-screen font-sans text-slate-900 pb-12 relative">
+        <div className="bg-transparent min-h-screen font-sans text-slate-900 pb-12 relative">
             {/* Header */}
             <header className="bg-white shadow-sm sticky top-0 z-20">
-                <div className="w-full px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-4">
+                <div className="w-full max-w-[1000px] mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <a
+                        href="https://www.valleyviewvt.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-4 hover:opacity-80 transition-opacity group"
+                        title="Stay at Valley View Villa"
+                    >
                         {/* Logo */}
                         <img
                             src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png"
                             alt="Valley View Villa"
                             className="h-12 w-auto"
                         />
-                        <div className="border-l-2 border-slate-200 pl-4 h-10 flex flex-col justify-center">
-                            <h1 className="text-lg font-bold uppercase tracking-tight text-slate-900 leading-none">
+                        <div className="border-l-2 border-slate-200 pl-4 h-10 flex flex-col justify-center group-hover:border-blue-200 transition-colors">
+                            <h1 className="text-lg font-bold uppercase tracking-tight text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
                                 Valley View Villa
                             </h1>
                             <span className="text-sm text-slate-500 font-medium">Snow Report</span>
                         </div>
-                    </div>
+                    </a>
 
                     <div className="flex items-center gap-3">
                         {/* Mountain Selector */}
@@ -120,7 +126,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                 </div>
             </header>
 
-            <main className="w-full px-2 py-6 space-y-6">
+            <main className="w-full max-w-[1000px] mx-auto px-4 mt-6 space-y-6">
 
                 {/* Mountain Title & Live Status */}
                 <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 border-b border-slate-200 pb-4 mx-4">
@@ -141,13 +147,15 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                         </div>
                     </div>
                 </div>
+                {/* Content Grid */}
 
-                {/* Hero Section: 3-Column Grid */}
+                {/* Hero Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                     {/* Col 1: Current Weather */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col justify-between relative overflow-hidden h-full min-h-[220px]">
-                        <div className="absolute -bottom-4 -right-4 opacity-5 pointer-events-none">
+                        <div className="absolute -bottom-4 -right-4 opacity-5 pointer-events-none text-slate-900">
+                            {/* Dynamic BG Icon based on current condition?? For now keeping static or matching condition */}
                             <Snowflake size={140} />
                         </div>
 
@@ -160,14 +168,22 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                             </div>
 
                             <div className="flex-1 flex flex-col justify-center">
-                                <div className="flex items-baseline gap-3">
-                                    <span className="text-5xl font-black tracking-tighter">{Math.round(weather.currentTempF)}°</span>
-                                    <div className="flex flex-col">
-                                        <span className="text-lg font-medium text-slate-600 leading-tight">{weather.conditions}</span>
-                                        <span className="text-xs font-bold text-blue-600 mt-0.5">
-                                            {weather.daily[0]?.snowIn > 0 ? `${Math.round(weather.daily[0].snowIn)}" Snow Today` : 'No Snow Expected Today'}
-                                        </span>
+                                <div className="flex items-center gap-4">
+                                    <div className="text-amber-400 drop-shadow-sm">
+                                        {/* Primary Condition Icon */}
+                                        {getWeatherIconComponent(weather.conditions, 48)}
                                     </div>
+                                    <span className="text-5xl font-black tracking-tighter text-slate-900">{Math.round(weather.currentTempF)}°</span>
+                                </div>
+                                <div className="mt-2 flex flex-col">
+                                    <span className="text-lg font-medium text-slate-600 leading-tight">{weather.conditions}</span>
+                                    {weather.daily[0]?.snowIn > 0 ? (
+                                        <span className="text-xs font-bold text-blue-600 mt-0.5 flex items-center gap-1">
+                                            <Snowflake size={12} /> {Math.round(weather.daily[0].snowIn)}" Snow Today
+                                        </span>
+                                    ) : (
+                                        <span className="text-xs font-bold text-slate-400 mt-0.5">No Snow Expected Today</span>
+                                    )}
                                 </div>
                             </div>
 
@@ -180,20 +196,20 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                     </div>
 
                     {/* Col 2: Snow Summary */}
-                    <div className="bg-gradient-to-br from-slate-50 to-indigo-50 border border-indigo-100 rounded-2xl p-6 shadow-sm flex flex-col relative overflow-hidden h-full min-h-[220px]">
-                        <div className="text-sm font-bold uppercase text-indigo-400 mb-4">Snow Summary</div>
+                    <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col relative overflow-hidden h-full min-h-[220px]">
+                        <div className="text-sm font-bold uppercase text-slate-400 mb-4">Snow Summary</div>
                         {snowReport.conditions === 'Data Unavailable' || snowReport.conditions === 'Scraping Blocked' ? (
-                            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-80 text-indigo-300">
+                            <div className="flex-1 flex flex-col items-center justify-center text-center opacity-80 text-slate-300">
                                 <Snowflake className="mb-2" size={32} />
-                                <span className="text-indigo-900 font-bold">Resort Report Unavailable</span>
-                                <span className="text-indigo-400 text-xs mt-1">Weather data is live</span>
+                                <span className="text-slate-900 font-bold">Resort Report Unavailable</span>
+                                <span className="text-slate-400 text-xs mt-1">Weather data is live</span>
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 gap-x-4 gap-y-6 flex-1 content-center">
-                                <SnowStat label="Last 24 Hours" value={`${Math.round(snowReport.snow24hIn)}"`} highlight={false} dark />
-                                <SnowStat label="Last 48 Hours" value={`${Math.round(snowReport.snow48hIn)}"`} dark />
-                                <SnowStat label="Base Depth" value={`${Math.round(snowReport.baseDepthIn.max)}"`} dark />
-                                <SnowStat label="Season Total" value={snowReport.seasonSnowIn > 0 ? `${Math.round(snowReport.seasonSnowIn)}"` : '--'} dark />
+                                <SnowStat label="Last 24 Hours" value={`${Math.round(snowReport.snow24hIn)}"`} icon={<Clock size={14} />} />
+                                <SnowStat label="Last 48 Hours" value={`${Math.round(snowReport.snow48hIn)}"`} icon={<Clock size={14} />} />
+                                <SnowStat label="Base Depth" value={`${Math.round(snowReport.baseDepthIn.max)}"`} icon={<Ruler size={14} />} />
+                                <SnowStat label="Season Total" value={snowReport.seasonSnowIn > 0 ? `${Math.round(snowReport.seasonSnowIn)}"` : '--'} icon={<Mountain size={14} />} />
                             </div>
                         )}
                     </div>
@@ -215,13 +231,23 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                 </div>
 
                 {/* Summary Banner */}
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-blue-900 shadow-sm relative overflow-hidden">
-                    <div className="font-bold text-sm uppercase tracking-wide text-blue-400 mb-2">Snow & Terrain Report</div>
-                    <div className="font-medium text-lg leading-snug relative z-10 text-slate-800">
+                <div className="bg-white border border-slate-200 rounded-xl p-6 text-slate-900 shadow-sm relative overflow-hidden">
+                    <div className="font-bold text-sm uppercase tracking-wide text-blue-600 mb-2">Snow & Terrain Report</div>
+                    <div className="font-medium text-base leading-snug relative z-10 text-slate-800">
                         {summary}
                     </div>
                     <div className="mt-3 text-xs font-bold uppercase tracking-wider text-blue-500 hover:text-blue-700 transition-colors">
-                        <a href="https://www.mountsnow.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx" target="_blank" rel="noopener noreferrer">View Official Report →</a>
+                        <a
+                            href={
+                                slug === 'okemo' ? "https://www.okemo.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx" :
+                                    slug === 'stratton' ? "https://www.stratton.com/the-mountain/mountain-report" :
+                                        "https://www.mountsnow.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx"
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Official Report →
+                        </a>
                     </div>
                 </div>
 
@@ -236,28 +262,38 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                         </div>
                         <div className="divide-y divide-slate-100">
                             {/* Slice from index 1 to skip today. Show 7 days. */}
-                            {weather.daily.slice(1, 8).map((day) => (
-                                <div key={day.date} className="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors group">
-                                    <div className="flex flex-col w-12">
-                                        <span className="font-bold text-slate-700 uppercase">{new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                                        <span className="text-xs text-slate-400">{new Date(day.date + 'T12:00:00').getDate()}</span>
-                                    </div>
-                                    <div className="text-3xl grayscale group-hover:grayscale-0 transition-all">{getWeatherIcon(day.conditions)}</div>
-                                    <div className="text-right flex flex-col items-end min-w-[3rem]">
-                                        <div className="font-bold text-slate-700">{Math.round(day.highF)}° <span className="text-slate-400 font-normal">/ {Math.round(day.lowF)}°</span></div>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                            <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400">
-                                                <Wind size={10} /> {Math.round(day.windMph)}
-                                            </div>
-                                            {day.snowIn > 0 && (
-                                                <div className="text-xs font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                                    <Snowflake size={10} /> {Math.round(day.snowIn)}"
+                            {weather.daily.slice(1, 8).map((day) => {
+                                const c = day.conditions.toLowerCase();
+                                const isSnowy = c.includes('snow') || c.includes('blizzard') || c.includes('flurries');
+                                const snowAmount = Math.round(day.snowIn);
+                                const showSnowBadge = day.snowIn > 0 || isSnowy;
+
+                                return (
+                                    <div key={day.date} className="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors group">
+                                        <div className="flex flex-col w-12">
+                                            <span className="font-bold text-slate-700 uppercase">{new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                                            <span className="text-xs text-slate-400">{new Date(day.date + 'T12:00:00').getDate()}</span>
+                                        </div>
+                                        <div className="text-slate-400 group-hover:text-amber-500 transition-all">
+                                            {/* Use Component for proper icon alignment and sharpness */}
+                                            {getWeatherIconComponent(day.conditions, 24)}
+                                        </div>
+                                        <div className="text-right flex flex-col items-end min-w-[3rem]">
+                                            <div className="font-bold text-slate-700">{Math.round(day.highF)}° <span className="text-slate-400 font-normal">/ {Math.round(day.lowF)}°</span></div>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                                <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400">
+                                                    <Wind size={10} /> {Math.round(day.windMph)}
                                                 </div>
-                                            )}
+                                                {showSnowBadge && (
+                                                    <div className="text-xs font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                                        <Snowflake size={10} /> {snowAmount > 0 ? snowAmount + '"' : '<1"'}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -286,24 +322,22 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
 
                         <div className="flex-1 overflow-y-auto p-0">
                             {activeTab === 'trails' ? (
-                                <table className="w-full text-sm text-left relative">
+                                <table className="w-full text-sm text-left relative table-fixed">
                                     <thead className="bg-slate-50 text-xs text-slate-500 uppercase font-bold sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <SortableHeader label="Trail Name" sortKey="name" currentSort={sortConfig} onSort={handleSort} />
-                                            <SortableHeader label="Difficulty" sortKey="difficulty" currentSort={sortConfig} onSort={handleSort} className="w-[120px]" align="center" />
-                                            <SortableHeader label="Status" sortKey="status" currentSort={sortConfig} onSort={handleSort} align="right" className="w-[100px]" />
+                                            <SortableHeader label="Trail Name" sortKey="name" currentSort={sortConfig} onSort={handleSort} className="w-[40%]" />
+                                            <SortableHeader label="Difficulty" sortKey="difficulty" currentSort={sortConfig} onSort={handleSort} className="w-[40%]" />
+                                            <SortableHeader label="Status" sortKey="status" currentSort={sortConfig} onSort={handleSort} align="right" className="w-[20%]" />
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {sortedTrails.map((trail, i) => (
                                             <tr key={i} className="hover:bg-slate-50">
-                                                <td className="px-4 py-3 font-medium text-slate-800 w-[180px] break-words">{trail.name}</td>
-                                                <td className="px-4 py-3 w-[120px]">
-                                                    <div className="flex justify-center">
-                                                        <DifficultyBadge difficulty={trail.difficulty} />
-                                                    </div>
+                                                <td className="px-4 py-3 font-medium text-slate-800 break-words">{trail.name}</td>
+                                                <td className="px-4 py-3">
+                                                    <DifficultyBadge difficulty={trail.difficulty} />
                                                 </td>
-                                                <td className="px-4 py-3 text-right w-[100px]">
+                                                <td className="px-4 py-3 text-right">
                                                     <StatusBadge status={trail.status} />
                                                 </td>
                                             </tr>
@@ -311,18 +345,18 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                                     </tbody>
                                 </table>
                             ) : (
-                                <table className="w-full text-sm text-left relative">
+                                <table className="w-full text-sm text-left relative table-fixed">
                                     <thead className="bg-slate-50 text-xs text-slate-500 uppercase font-bold sticky top-0 z-10 shadow-sm">
                                         <tr>
-                                            <SortableHeader label="Lift Name" sortKey="name" currentSort={sortConfig} onSort={handleSort} />
-                                            <SortableHeader label="Type" sortKey="type" currentSort={sortConfig} onSort={handleSort} />
-                                            <SortableHeader label="Status" sortKey="status" currentSort={sortConfig} onSort={handleSort} align="right" />
+                                            <SortableHeader label="Lift Name" sortKey="name" currentSort={sortConfig} onSort={handleSort} className="w-[40%]" />
+                                            <SortableHeader label="Type" sortKey="type" currentSort={sortConfig} onSort={handleSort} className="w-[40%]" />
+                                            <SortableHeader label="Status" sortKey="status" currentSort={sortConfig} onSort={handleSort} align="right" className="w-[20%]" />
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
                                         {sortedLifts.map((lift, i) => (
                                             <tr key={i} className="hover:bg-slate-50">
-                                                <td className="px-4 py-3 font-medium text-slate-800">{lift.name}</td>
+                                                <td className="px-4 py-3 font-medium text-slate-800 break-words">{lift.name}</td>
                                                 <td className="px-4 py-3 text-slate-500 capitalize">{lift.type || '-'}</td>
                                                 <td className="px-4 py-3 text-right">
                                                     <StatusBadge status={lift.status} />
@@ -349,12 +383,24 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
 
 function SortableHeader({ label, sortKey, currentSort, onSort, align = 'left', className = '' }: any) {
     const isActive = currentSort?.key === sortKey;
+
+    let alignClass = 'text-left';
+    let justifyClass = 'justify-start';
+
+    if (align === 'right') {
+        alignClass = 'text-right';
+        justifyClass = 'justify-end';
+    } else if (align === 'center') {
+        alignClass = 'text-center';
+        justifyClass = 'justify-center';
+    }
+
     return (
         <th
-            className={`px-4 py-3 cursor-pointer hover:bg-slate-100 transition-colors select-none ${align === 'right' ? 'text-right' : 'text-left'} ${className}`}
+            className={`px-4 py-3 cursor-pointer hover:bg-slate-100 transition-colors select-none ${alignClass} ${className}`}
             onClick={() => onSort(sortKey)}
         >
-            <div className={`flex items-center gap-1 ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`flex items-center gap-1 ${justifyClass}`}>
                 {label}
                 <div className="flex flex-col text-slate-300">
                     <ChevronUp size={10} className={isActive && currentSort.direction === 'asc' ? 'text-slate-600' : ''} />
@@ -367,18 +413,28 @@ function SortableHeader({ label, sortKey, currentSort, onSort, align = 'left', c
 
 function SubscribeModal({ onClose }: { onClose: () => void }) {
     const [email, setEmail] = useState('');
-    const [duration, setDuration] = useState('3');
+    const [selectedResorts, setSelectedResorts] = useState<string[]>(['mount-snow']);
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(new Date(Date.now() + 86400000).toISOString().split('T')[0]);
     const [time, setTime] = useState('07:00');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
+    function toggleResort(id: string) {
+        setSelectedResorts(prev =>
+            prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
+        );
+    }
+
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (selectedResorts.length === 0) return;
+
         setStatus('loading');
         try {
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, duration, time }),
+                body: JSON.stringify({ email, resorts: selectedResorts, startDate, endDate, time }),
             });
             if (res.ok) {
                 setStatus('success');
@@ -414,6 +470,27 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
+                        <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Select Mountains</label>
+                        <div className="flex flex-col gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            {[
+                                { id: 'mount-snow', label: 'Mount Snow' },
+                                { id: 'okemo', label: 'Okemo' },
+                                { id: 'stratton', label: 'Stratton' }
+                            ].map(resort => (
+                                <label key={resort.id} className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
+                                        checked={selectedResorts.includes(resort.id)}
+                                        onChange={() => toggleResort(resort.id)}
+                                    />
+                                    <span className="text-sm font-medium text-slate-700">{resort.label}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div>
                         <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Email Address</label>
                         <input
                             type="email"
@@ -424,19 +501,29 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
                             onChange={e => setEmail(e.target.value)}
                         />
                     </div>
-                    <div>
-                        <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Vacation Length (Days)</label>
-                        <select
-                            className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            value={duration}
-                            onChange={e => setDuration(e.target.value)}
-                        >
-                            <option value="3">3 Days</option>
-                            <option value="5">5 Days</option>
-                            <option value="7">7 Days</option>
-                            <option value="30">30 Days</option>
-                            <option value="Indefinite">Indefinitely</option>
-                        </select>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Start Date</label>
+                            <input
+                                type="date"
+                                required
+                                className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                value={startDate}
+                                onChange={e => setStartDate(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold uppercase text-slate-500 mb-1">End Date</label>
+                            <input
+                                type="date"
+                                required
+                                className="w-full border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                value={endDate}
+                                min={startDate}
+                                onChange={e => setEndDate(e.target.value)}
+                            />
+                        </div>
                     </div>
                     <div>
                         <label className="block text-xs font-bold uppercase text-slate-500 mb-1">Delivery Time</label>
@@ -475,55 +562,54 @@ function TerrainGauge({ percent }: { percent: number }) {
     }
 
     // SVG Arc Params
-    const radius = 40; // Increased size to fill space
-    const circumference = radius * Math.PI; // Half circle
+    const radius = 80;
+    const circumference = radius * Math.PI;
     const strokeDashoffset = circumference - (percent / 100) * circumference;
 
     return (
-        <div className="flex flex-col items-center justify-center -mt-2">
-            <div className="relative w-40 h-20 overflow-hidden">
-                {/* Background Arc */}
-                <svg className="w-40 h-40 transform rotate-180" viewBox="0 0 100 100">
-                    <circle
-                        cx="50" cy="50" r={radius}
+        <div className="flex flex-col items-center justify-center -mt-4">
+            <div className="relative w-64 h-32 overflow-hidden flex justify-center">
+                {/* Background Arc: viewBox 0 0 200 110 ensures correct scaling */}
+                <svg className="w-64 h-32" viewBox="0 0 200 110">
+                    <path
+                        d="M 20 100 A 80 80 0 0 1 180 100"
                         fill="none"
-                        stroke="#f1f5f9"
-                        strokeWidth="8"
-                        strokeDasharray={circumference}
-                        strokeDashoffset="0"
-                        className="origin-center"
+                        stroke="#e2e8f0"
+                        strokeWidth="12"
+                        strokeLinecap="round"
                     />
-                </svg>
-                {/* Foreground Arc */}
-                <svg className="w-40 h-40 absolute top-0 left-0 transform rotate-180" viewBox="0 0 100 100">
-                    <circle
-                        cx="50" cy="50" r={radius}
+                    <path
+                        d="M 20 100 A 80 80 0 0 1 180 100"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="8"
+                        strokeWidth="12"
+                        strokeLinecap="round"
                         strokeDasharray={circumference}
                         strokeDashoffset={strokeDashoffset}
-                        strokeLinecap="round"
-                        className={`origin-center transition-all duration-1000 ease-out ${colorClass}`}
+                        className={`transition-all duration-1000 ease-out ${colorClass}`}
                     />
                 </svg>
-                <div className="absolute bottom-0 w-full text-center flex flex-col items-center">
-                    <span className={`text-3xl font-black leading-none ${colorClass}`}>{percent}%</span>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Terrain Open</span>
+
+                {/* Center Label */}
+                <div className="absolute bottom-0 flex flex-col items-center justify-end mb-2">
+                    <span className={`text-4xl font-black tracking-tighter ${colorClass}`}>{Math.round(percent)}%</span>
+                    <span className="text-xs font-bold uppercase text-slate-400 tracking-wider mt-1">{label}</span>
                 </div>
-            </div>
-            <div className={`text-lg font-bold uppercase tracking-tight mt-1 ${colorClass}`}>
-                {label}
             </div>
         </div>
     );
 }
 
-function SnowStat({ label, value, highlight = false, dark = false }: { label: string, value: string, highlight?: boolean, dark?: boolean }) {
+function SnowStat({ label, value, highlight = false, icon }: { label: string, value: string, highlight?: boolean, dark?: boolean, icon?: React.ReactNode }) {
     return (
-        <div className={`flex flex-col p-2 rounded-xl ${highlight ? (dark ? 'bg-indigo-100' : 'bg-white/10') : ''}`}>
-            <span className={`${dark ? 'text-indigo-400' : 'text-blue-100'} text-xs font-bold uppercase tracking-wider mb-1`}>{label}</span>
-            <span className={`text-3xl font-black ${dark ? 'text-slate-900' : ''}`}>{value}</span>
+        <div className="flex flex-col">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-0.5 flex items-center gap-1.5">
+                {icon && <span className="text-slate-300">{icon}</span>}
+                {label}
+            </span>
+            <span className={`text-2xl font-black tracking-tight ${highlight ? 'text-blue-600' : 'text-slate-800'}`}>
+                {value}
+            </span>
         </div>
     );
 }
@@ -571,12 +657,38 @@ function DifficultyBadge({ difficulty }: { difficulty?: string | number }) {
     );
 }
 
-function getWeatherIcon(condition: string) {
+function getWeatherIconComponent(condition: string, size: number = 24) {
     const c = condition.toLowerCase();
-    if (c.includes('snow')) return '❄️';
-    if (c.includes('rain')) return '🌧️';
-    if (c.includes('cloud')) return '☁️';
-    if (c.includes('sun') || c.includes('clear')) return '☀️';
-    if (c.includes('fog')) return '🌫️';
-    return '⛅';
+
+    // Clear / Sunny (Yellow Fill)
+    if (c.includes('sunny') || c.includes('clear')) {
+        return <Sun size={size} className="text-amber-500 fill-amber-300" />;
+    }
+
+    // Partly Cloudy (Grey Cloud with Yellow Sun)
+    if (c.includes('partly') && c.includes('cloud')) {
+        return (
+            <div className="relative">
+                <CloudSun size={size} className="text-slate-500 fill-slate-100" />
+            </div>
+        );
+    }
+
+    // Rain / Drizzle (Blue Fill)
+    if (c.includes('rain') || c.includes('drizzle') || c.includes('shower')) {
+        return <CloudRain size={size} className="text-blue-600 fill-blue-200" />;
+    }
+
+    // Snow (Distinct Snowflake Icon)
+    if (c.includes('snow') || c.includes('blizzard') || c.includes('flurries')) {
+        return <Snowflake size={size} className="text-sky-500 fill-sky-100" />;
+    }
+
+    // Cloudy / Overcast (Solid Grey Fill)
+    if (c.includes('cloud') || c.includes('overcast') || c.includes('fog') || c.includes('mist')) {
+        return <Cloud size={size} className="text-slate-600 fill-slate-300" />;
+    }
+
+    // Default
+    return <Sun size={size} className="text-slate-300" />;
 }
