@@ -9,7 +9,7 @@ export default async function WidgetPage({
     const slug = typeof sp.mountain === 'string' ? sp.mountain : 'mount-snow';
 
     return (
-        <div className="min-h-screen bg-transparent p-4 flex items-center justify-center">
+        <div className="bg-transparent p-4 inline-block w-full">
             <SnowWidget defaultSlug={slug} />
         </div>
     );

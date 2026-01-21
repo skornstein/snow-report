@@ -37,7 +37,8 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     useEffect(() => {
         const sendHeight = () => {
             if (typeof window !== 'undefined') {
-                const height = document.documentElement.scrollHeight;
+                // Use body scrollHeight for more accurate content measurement
+                const height = document.body.scrollHeight;
                 window.parent.postMessage({ type: 'snow-widget-resize', height }, '*');
             }
         };
@@ -92,7 +93,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     const sortedTrails = sortData(liftsTerrain.trails);
 
     return (
-        <div className="bg-transparent min-h-screen font-sans text-slate-900 pb-12 relative">
+        <div className="bg-transparent font-sans text-slate-900 pb-12 relative">
             {/* Header */}
             <header className="bg-white shadow-sm sticky top-0 z-20">
                 <div className="w-full max-w-[1000px] mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
