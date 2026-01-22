@@ -11,15 +11,21 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
     }
 
     try {
-        const data = await resend.emails.send({
+        const { data, error } = await resend.emails.send({
             from: 'Snow Report <updates@valleyviewvt.com>', // Requires verified domain
             to,
             subject,
             html,
         });
-        return { success: true, id: data.data?.id };
+
+        if (error) {
+            console.error('Resend API Returned Error:', error);
+            return { success: false, error };
+        }
+
+        return { success: true, id: data?.id };
     } catch (error) {
-        console.error('Resend Error:', error);
+        console.error('Resend Network/SDK Error:', error);
         return { success: false, error };
     }
 }
