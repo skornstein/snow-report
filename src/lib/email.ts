@@ -12,7 +12,7 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Snow Report <updates@valleyviewvt.com>', // Requires verified domain
+            from: 'Snow Report <report@updates.valleyviewvt.com>', // Must match verified subdomain
             to,
             subject,
             html,
