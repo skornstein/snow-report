@@ -16,6 +16,11 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
     useEffect(() => {
+        // Send initial "Loading" height to prevent 0px collapse
+        if (typeof window !== 'undefined') {
+            window.parent.postMessage({ type: 'snow-widget-resize', height: 800 }, '*');
+        }
+
         async function fetchData() {
             setLoading(true);
             setError('');
@@ -33,7 +38,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
         fetchData();
     }, [slug]);
 
-    // Broadcast Height to Parent (for Iframe Resizing)
+    // Broadcast Real Height to Parent (for Iframe Resizing)
     useEffect(() => {
         const sendHeight = () => {
             if (typeof window !== 'undefined') {
@@ -43,7 +48,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
             }
         };
 
-        // Send initial
+        // Send immediately on render
         sendHeight();
 
         // Observe changes
@@ -54,13 +59,14 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     }, [data, activeTab]); // Re-run when content changes
 
     if (loading && !data) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 animate-pulse">
+        // Use min-h-[800px] instead of screen to avoid massive jumps
+        <div className="min-h-[800px] flex items-center justify-center bg-slate-50 text-slate-500 animate-pulse rounded-2xl">
             Loading Conditions...
         </div>
     );
 
     if (error || !data) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 text-red-500">
+        <div className="min-h-[800px] flex items-center justify-center bg-slate-50 text-red-500 rounded-2xl">
             {error}
         </div>
     );
