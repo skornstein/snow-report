@@ -515,9 +515,13 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
 
     if (status === 'success') {
         return (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-20 p-4 backdrop-blur-sm">
                 <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
-                    <div className="text-5xl mb-4">✅</div>
+                    <div className="flex justify-center mb-4">
+                        <div className="bg-green-100 p-4 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M20 6 9 17l-5-5" /></svg>
+                        </div>
+                    </div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">You're Subscribed!</h3>
                     <p className="text-slate-500 mb-6">A confirmation email has been sent to <strong>{email}</strong>. Get ready for accurate snow reports delivered straight to your inbox.</p>
                     <button
@@ -531,8 +535,9 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
         );
     }
 
+    // Default (Subscribe Form) - Also move this up
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-20 p-4 backdrop-blur-sm">
             <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-bold text-slate-900">Subscribe for Alerts</h3>
@@ -614,6 +619,11 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
                     >
                         {status === 'loading' ? 'Subscribing...' : 'Start My Snow Report'}
                     </button>
+                    {status === 'error' && (
+                        <p className="text-red-500 text-xs font-bold text-center mt-2">
+                            Something went wrong. Please try again.
+                        </p>
+                    )}
                 </form>
             </div>
         </div>
