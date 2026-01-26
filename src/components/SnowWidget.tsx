@@ -102,8 +102,8 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     return (
         <div className="bg-transparent font-sans text-slate-900 pb-12 relative">
             {/* Header */}
-            <header className="bg-white shadow-sm sticky top-0 z-20">
-                <div className="w-full max-w-[1000px] mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <header className="w-full max-w-[1000px] mx-auto bg-white shadow-sm sticky top-0 z-20 rounded-b-2xl border-x border-b border-slate-100">
+                <div className="px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
                     <a
                         href="https://www.valleyviewvt.com"
                         target="_blank"
