@@ -190,3 +190,60 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
     </html>
     `;
 }
+
+export function generateSubscriptionConfirmationEmail(resorts: string[], startDate: string, endDate: string): string {
+    const resortNames = resorts.map(slug => {
+        if (slug === 'mount-snow') return 'Mount Snow';
+        if (slug === 'okemo') return 'Okemo';
+        if (slug === 'stratton') return 'Stratton';
+        return slug;
+    }).join(', ');
+
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; line-height: 1.5; margin: 0; padding: 0; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+            .header { background-color: #ffffff; padding: 24px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+            .header img { height: 40px; margin-bottom: 8px; }
+            .header h1 { font-size: 16px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
+            .content { padding: 32px; }
+            .greeting { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
+            .info-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 24px; }
+            .info-label { font-size: 12px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+            .info-value { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 12px; }
+            .info-value:last-child { margin-bottom: 0; }
+            .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <img src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png" alt="Logo">
+                <h1>Valley View Villa</h1>
+            </div>
+            <div class="content">
+                <div class="greeting">You're Subscribed! ✅</div>
+                <p>You will now receive daily snow reports for the duration of your stay.</p>
+                
+                <div class="info-box">
+                    <div class="info-label">Selected Resorts</div>
+                    <div class="info-value">${resortNames}</div>
+                    
+                    <div class="info-label">Active Dates</div>
+                    <div class="info-value">${startDate} to ${endDate}</div>
+                </div>
+
+                <p style="font-size: 14px; color: #475569;">Reports are sent daily at 7:00 AM EST. Enjoy your time on the slopes!</p>
+            </div>
+            <div class="footer">
+                Sent with 💙 from Valley View Villa<br>
+                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}

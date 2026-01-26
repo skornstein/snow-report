@@ -504,7 +504,7 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
             });
             if (res.ok) {
                 setStatus('success');
-                setTimeout(onClose, 2000);
+                // No auto-close, let user close manually
             } else {
                 setStatus('error');
             }
@@ -515,11 +515,17 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
 
     if (status === 'success') {
         return (
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center">
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+                <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl">
                     <div className="text-5xl mb-4">✅</div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">You're Subscribed!</h3>
-                    <p className="text-slate-500">Get ready for accurate snow reports delivered straight to your inbox.</p>
+                    <p className="text-slate-500 mb-6">A confirmation email has been sent to <strong>{email}</strong>. Get ready for accurate snow reports delivered straight to your inbox.</p>
+                    <button
+                        onClick={onClose}
+                        className="w-full bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold py-3 rounded-xl transition-colors"
+                    >
+                        Close
+                    </button>
                 </div>
             </div>
         );

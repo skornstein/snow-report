@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
+import { sendEmail } from '@/lib/email';
+import { generateSubscriptionConfirmationEmail } from '@/lib/email-templates';
 
 export async function POST(request: Request) {
     try {
@@ -26,6 +28,19 @@ export async function POST(request: Request) {
         if (error) {
             console.error('Supabase Error:', error);
             throw error;
+        }
+
+        // Send Confirmation Email
+        try {
+            const html = generateSubscriptionConfirmationEmail(resorts, startDate, endDate);
+            await sendEmail({
+                to: email,
+                subject: '✅ Subscription Confirmed: Daily Snow Reports',
+                html
+            });
+        } catch (emailError) {
+            console.error('Failed to send confirmation email', emailError);
+            // Don't fail the request if email fails, but log it
         }
 
         return NextResponse.json({ success: true, message: 'Subscribed successfully!' });
