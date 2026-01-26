@@ -35,7 +35,7 @@ export async function POST(request: Request) {
             const html = generateSubscriptionConfirmationEmail(resorts, startDate, endDate);
             await sendEmail({
                 to: email,
-                subject: '✅ Subscription Confirmed: Daily Snow Reports',
+                subject: 'Subscription Confirmed ✔',
                 html
             });
         } catch (emailError) {
