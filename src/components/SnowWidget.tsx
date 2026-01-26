@@ -102,53 +102,55 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     return (
         <div className="bg-transparent font-sans text-slate-900 pb-12 relative">
             {/* Header */}
-            <header className="w-full max-w-[1000px] mx-auto bg-white shadow-sm sticky top-0 z-20 rounded-b-2xl border-x border-b border-slate-100">
-                <div className="px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <a
-                        href="https://www.valleyviewvt.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-4 hover:opacity-80 transition-opacity group"
-                        title="Stay at Valley View Villa"
-                    >
-                        {/* Logo */}
-                        <img
-                            src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png"
-                            alt="Valley View Villa"
-                            className="h-12 w-auto"
-                        />
-                        <div className="border-l-2 border-slate-200 pl-4 h-10 flex flex-col justify-center group-hover:border-blue-200 transition-colors">
-                            <h1 className="text-lg font-bold uppercase tracking-tight text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
-                                Valley View Villa
-                            </h1>
-                            <span className="text-sm text-slate-500 font-medium">Snow Report</span>
-                        </div>
-                    </a>
-
-                    <div className="flex items-center gap-3">
-                        {/* Mountain Selector */}
-                        <div className="relative group">
-                            <select
-                                className="appearance-none bg-white border-2 border-slate-200 group-hover:border-blue-400 rounded-lg py-2 pl-4 pr-10 text-sm font-bold text-slate-700 cursor-pointer shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
-                                value={slug}
-                                onChange={(e) => setSlug(e.target.value)}
-                            >
-                                <option value="mount-snow">Mount Snow</option>
-                                <option value="okemo">Okemo</option>
-                                <option value="stratton">Stratton</option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-hover:text-blue-500 transition-colors">
-                                <ChevronDown size={16} strokeWidth={3} />
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => setShowSubscribe(true)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors shadow-sm flex items-center gap-2"
+            <header className="sticky top-0 z-20 w-full pointer-events-none">
+                <div className="max-w-[1000px] mx-auto px-4 pointer-events-auto">
+                    <div className="bg-white shadow-sm rounded-2xl border border-slate-100 px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <a
+                            href="https://www.valleyviewvt.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-4 hover:opacity-80 transition-opacity group"
+                            title="Stay at Valley View Villa"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-                            Subscribe
-                        </button>
+                            {/* Logo */}
+                            <img
+                                src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png"
+                                alt="Valley View Villa"
+                                className="h-12 w-auto"
+                            />
+                            <div className="border-l-2 border-slate-200 pl-4 h-10 flex flex-col justify-center group-hover:border-blue-200 transition-colors">
+                                <h1 className="text-lg font-bold uppercase tracking-tight text-slate-900 leading-none group-hover:text-blue-600 transition-colors">
+                                    Valley View Villa
+                                </h1>
+                                <span className="text-sm text-slate-500 font-medium">Snow Report</span>
+                            </div>
+                        </a>
 
+                        <div className="flex items-center gap-3">
+                            {/* Mountain Selector */}
+                            <div className="relative group">
+                                <select
+                                    className="appearance-none bg-white border-2 border-slate-200 group-hover:border-blue-400 rounded-lg py-2 pl-4 pr-10 text-sm font-bold text-slate-700 cursor-pointer shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
+                                    value={slug}
+                                    onChange={(e) => setSlug(e.target.value)}
+                                >
+                                    <option value="mount-snow">Mount Snow</option>
+                                    <option value="okemo">Okemo</option>
+                                    <option value="stratton">Stratton</option>
+                                </select>
+                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-hover:text-blue-500 transition-colors">
+                                    <ChevronDown size={16} strokeWidth={3} />
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setShowSubscribe(true)}
+                                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors shadow-sm flex items-center gap-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                                Subscribe
+                            </button>
+
+                        </div>
                     </div>
                 </div>
             </header>
@@ -441,7 +443,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
             </main>
 
             {showSubscribe && <SubscribeModal onClose={() => setShowSubscribe(false)} />}
-        </div>
+        </div >
     );
 }
 
