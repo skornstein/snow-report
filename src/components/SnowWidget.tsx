@@ -267,7 +267,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                             href={
                                 slug === 'okemo' ? "https://www.okemo.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx" :
                                     slug === 'stratton' ? "https://www.stratton.com/the-mountain/mountain-report" :
-                                        "https://www.mountsnow.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx"
+                                        "https://www.mountsnow.com/the-mountain/mountain-conditions/lift-terrain-status.aspx"
                             }
                             target="_blank"
                             rel="noopener noreferrer"
