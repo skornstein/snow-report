@@ -18,12 +18,12 @@ export async function POST(request: Request) {
 
         const { error } = await supabase
             .from('subscribers')
-            .insert({
+            .upsert({
                 email,
                 resorts,
                 start_date: startDate,
                 end_date: endDate
-            });
+            }, { onConflict: 'email' });
 
         if (error) {
             console.error('Supabase Error:', error);
