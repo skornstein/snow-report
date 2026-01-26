@@ -225,7 +225,12 @@ export function generateSubscriptionConfirmationEmail(resorts: string[], startDa
                 <h1>Valley View Villa</h1>
             </div>
             <div class="content">
-                <div class="greeting">You're Subscribed! ✅</div>
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="display: inline-block; background-color: #dcfce7; border-radius: 50%; padding: 12px; margin-bottom: 16px;">
+                        <span style="display: block; color: #16a34a; font-family: sans-serif; font-size: 24px; line-height: 1; font-weight: bold;">✓</span>
+                    </div>
+                    <div class="greeting" style="margin-bottom: 8px;">You're Subscribed!</div>
+                </div>
                 <p>You will now receive daily snow reports for the duration of your stay.</p>
                 
                 <div class="info-box">
