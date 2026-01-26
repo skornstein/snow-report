@@ -81,9 +81,8 @@ export function generateSingleResortEmail(data: MountainData): string {
 }
 
 export function generateGenMultiResortEmail(resorts: MountainData[]): string {
-    // Sort by new snow
-    const sorted = [...resorts].sort((a, b) => b.snowReport.snow24hIn - a.snowReport.snow24hIn);
-    const winner = sorted[0];
+    // Neutral Sort (Alphabetical)
+    const sorted = [...resorts].sort((a, b) => a.mountain.name.localeCompare(b.mountain.name));
 
     return `
     <!DOCTYPE html>
@@ -96,12 +95,27 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
             .header img { height: 40px; margin-bottom: 8px; }
             .header h1 { font-size: 16px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
             .content { padding: 32px; }
-            .greeting { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
-            .resort-row { border-bottom: 1px solid #f1f5f9; padding: 16px 0; display: flex; justify-content: space-between; align-items: center; }
-            .resort-row:last-child { border-bottom: none; }
-            .resort-name { font-weight: 800; text-transform: uppercase; font-size: 14px; color: #334155; }
-            .snow-badge { background-color: #eff6ff; color: #2563eb; padding: 4px 8px; border-radius: 4px; font-weight: 700; font-size: 13px; }
-            .winner-badge { background-color: #fbbf24; color: #78350f; }
+            .greeting { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+            .sub-greeting { font-size: 14px; color: #64748b; margin-bottom: 24px; }
+            
+            /* Resort Card */
+            .resort-card { border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05); }
+            .resort-header { background-color: #f8fafc; padding: 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+            .resort-name { font-size: 18px; font-weight: 800; color: #0f172a; }
+            .resort-link { font-size: 12px; font-weight: 600; color: #2563eb; text-decoration: none; }
+            
+            /* Data Grid */
+            .data-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid #e2e8f0; }
+            .data-cell { padding: 12px; text-align: center; border-right: 1px solid #e2e8f0; }
+            .data-cell:last-child { border-right: none; }
+            .data-label { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 4px; }
+            .data-value { font-size: 16px; font-weight: 800; color: #1e293b; }
+            .highlight { color: #2563eb; }
+
+            /* Forecast Row */
+            .forecast-row { padding: 12px 16px; background-color: #fff; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: #475569; }
+            .forecast-badge { background-color: #eff6ff; color: #2563eb; font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 6px; }
+
             .footer { background-color: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; }
         </style>
     </head>
@@ -112,29 +126,60 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
                 <h1>Valley View Villa</h1>
             </div>
             <div class="content">
-                <div class="greeting">Powder Alert! 🚨</div>
-                <p>Fresh snow reported across the region. <strong>${winner.mountain.name}</strong> is the winner today with <strong>${winner.snowReport.snow24hIn}"</strong> overnight!</p>
+                <div class="greeting">Daily Snow Report 🏔️</div>
+                <div class="sub-greeting">Current conditions for your selected mountains.</div>
 
-                <div style="margin-top: 24px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0 16px;">
-                    ${sorted.map((r, i) => `
-                        <div class="resort-row">
-                            <div>
-                                <div class="resort-name">${r.mountain.name}</div>
-                                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
-                                    ${r.weather.conditions} • ${Math.round(r.weather.currentTempF)}°F
-                                </div>
+                ${sorted.map(r => {
+        const snowToday = Math.round(r.weather.daily[0]?.snowIn || 0);
+        return `
+                    <div class="resort-card">
+                        <div class="resort-header">
+                            <div class="resort-name">${r.mountain.name}</div>
+                            <a href="${r.mountain.url}" class="resort-link">Full Report →</a>
+                        </div>
+                        
+                        <!-- Row 1: Snow Stats -->
+                        <div class="data-grid">
+                            <div class="data-cell">
+                                <div class="data-label">Last 24h</div>
+                                <div class="data-value highlight">${Math.round(r.snowReport.snow24hIn)}"</div>
                             </div>
-                            <div style="text-align: right;">
-                                <span class="snow-badge ${i === 0 && r.snowReport.snow24hIn > 0 ? 'winner-badge' : ''}">
-                                    ${r.snowReport.snow24hIn}" New
-                                </span>
-                                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                                    ${r.liftsTerrain.trailsOpen}/${r.liftsTerrain.trailsTotal} Open
-                                </div>
+                            <div class="data-cell">
+                                <div class="data-label">Last 48h</div>
+                                <div class="data-value">${Math.round(r.snowReport.snow48hIn)}"</div>
+                            </div>
+                            <div class="data-cell">
+                                <div class="data-label">Base Depth</div>
+                                <div class="data-value">${Math.round(r.snowReport.baseDepthIn.max)}"</div>
                             </div>
                         </div>
-                    `).join('')}
-                </div>
+
+                        <!-- Row 2: Terrain Stats -->
+                        <div class="data-grid" style="border-bottom: 1px solid #e2e8f0;">
+                            <div class="data-cell">
+                                <div class="data-label">Trails Open</div>
+                                <div class="data-value">${r.liftsTerrain.trailsOpen}/${r.liftsTerrain.trailsTotal}</div>
+                            </div>
+                            <div class="data-cell">
+                                <div class="data-label">Lifts Turning</div>
+                                <div class="data-value">${r.liftsTerrain.liftsOpen}/${r.liftsTerrain.liftsTotal}</div>
+                            </div>
+                            <div class="data-cell">
+                                <div class="data-label">Terrain Open</div>
+                                <div class="data-value">${r.liftsTerrain.terrainOpenPct}%</div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Weather/Forecast -->
+                        <div class="forecast-row">
+                            <div style="display: flex; align-items: center;">
+                                <strong>Today:</strong>&nbsp; ${r.weather.conditions} • ${Math.round(r.weather.currentTempF)}°F
+                                ${snowToday > 0 ? `<span class="forecast-badge">❄️ ${snowToday}" Expected</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('')}
+
             </div>
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>

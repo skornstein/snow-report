@@ -83,9 +83,9 @@ export async function GET(request: Request) {
                         .filter((d: MountainData | null): d is MountainData => d !== null);
 
                     if (relevantData.length > 0) {
-                        const sorted = [...relevantData].sort((a, b) => b.snowReport.snow24hIn - a.snowReport.snow24hIn);
-                        const winner = sorted[0];
-                        const subject = `❄️ Snow Update: ${winner.mountain.name} leads with ${winner.snowReport.snow24hIn}" New Snow!`;
+                        // Neutral Subject Line
+                        const names = relevantData.map((d: MountainData) => d.mountain.name).join(', ');
+                        const subject = `❄️ Daily Snow Report: ${names}`;
 
                         const html = generateGenMultiResortEmail(relevantData);
                         await sendEmail({ to: sub.email, subject, html });
