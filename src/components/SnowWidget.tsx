@@ -11,6 +11,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
     const [error, setError] = useState('');
     const [activeTab, setActiveTab] = useState<'lifts' | 'trails'>('trails');
     const [showSubscribe, setShowSubscribe] = useState(false);
+    const [activeWeatherTab, setActiveWeatherTab] = useState<'daily' | 'hourly'>('daily');
 
     // Sorting State
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
@@ -280,46 +281,83 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    {/* Left: 7-Day Forecast (Vertical) - Starts TOMORROW */}
-                    <div className="bg-white rounded-2xl shadow-sm overflow-hidden lg:col-span-1 border border-slate-100">
-                        <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <h2 className="font-bold text-lg text-slate-800">Forecast</h2>
-                            <span className="text-xs text-slate-400 font-medium">Next 7 Days</span>
+                    {/* Left: Forecast (Vertical) */}
+                    <div className="bg-white rounded-2xl shadow-sm overflow-hidden lg:col-span-1 border border-slate-100 flex flex-col h-[600px]">
+                        <div className="p-2 bg-slate-50/50 border-b border-slate-100 flex gap-2">
+                            <button
+                                onClick={() => setActiveWeatherTab('daily')}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-bold transition-all ${activeWeatherTab === 'daily' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                Daily
+                            </button>
+                            <button
+                                onClick={() => setActiveWeatherTab('hourly')}
+                                className={`flex-1 py-1.5 px-3 rounded-lg text-sm font-bold transition-all ${activeWeatherTab === 'hourly' ? 'bg-white shadow text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                Hourly
+                            </button>
                         </div>
-                        <div className="divide-y divide-slate-100">
-                            {/* Slice from index 1 to skip today. Show 7 days. */}
-                            {weather.daily.slice(1, 8).map((day) => {
-                                const c = day.conditions.toLowerCase();
-                                const isSnowy = c.includes('snow') || c.includes('blizzard') || c.includes('flurries');
-                                const snowAmount = Math.round(day.snowIn);
-                                const showSnowBadge = day.snowIn > 0 || isSnowy;
 
-                                return (
-                                    <div key={day.date} className="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors group">
-                                        <div className="flex flex-col w-12">
-                                            <span className="font-bold text-slate-700 uppercase">{new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                                            <span className="text-xs text-slate-400">{new Date(day.date + 'T12:00:00').getDate()}</span>
-                                        </div>
-                                        <div className="text-slate-400 group-hover:text-amber-500 transition-all">
-                                            {/* Use Component for proper icon alignment and sharpness */}
-                                            {getWeatherIconComponent(day.conditions, 24)}
-                                        </div>
-                                        <div className="text-right flex flex-col items-end min-w-[3rem]">
-                                            <div className="font-bold text-slate-700">{Math.round(day.highF)}° <span className="text-slate-400 font-normal">/ {Math.round(day.lowF)}°</span></div>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400">
-                                                    <Wind size={10} /> {Math.round(day.windMph)}
-                                                </div>
-                                                {showSnowBadge && (
-                                                    <div className="text-xs font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-1">
-                                                        <Snowflake size={10} /> {snowAmount > 0 ? snowAmount + '"' : '<1"'}
+                        <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+                            {activeWeatherTab === 'daily' ? (
+                                /* Daily View */
+                                weather.daily.slice(1, 8).map((day) => {
+                                    const c = day.conditions.toLowerCase();
+                                    const isSnowy = c.includes('snow') || c.includes('blizzard') || c.includes('flurries');
+                                    const snowAmount = Math.round(day.snowIn);
+                                    const showSnowBadge = day.snowIn > 0 || isSnowy;
+
+                                    return (
+                                        <div key={day.date} className="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors group">
+                                            <div className="flex flex-col w-12">
+                                                <span className="font-bold text-slate-700 uppercase">{new Date(day.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                                                <span className="text-xs text-slate-400">{new Date(day.date + 'T12:00:00').getDate()}</span>
+                                            </div>
+                                            <div className="text-slate-400 group-hover:text-amber-500 transition-all">
+                                                {getWeatherIconComponent(day.conditions, 24)}
+                                            </div>
+                                            <div className="text-right flex flex-col items-end min-w-[3rem]">
+                                                <div className="font-bold text-slate-700">{Math.round(day.highF)}° <span className="text-slate-400 font-normal">/ {Math.round(day.lowF)}°</span></div>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400">
+                                                        <Wind size={10} /> {Math.round(day.windMph)}
                                                     </div>
-                                                )}
+                                                    {showSnowBadge && (
+                                                        <div className="text-xs font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded flex items-center gap-1">
+                                                            <Snowflake size={10} /> {snowAmount > 0 ? snowAmount + '"' : '<1"'}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })
+                            ) : (
+                                /* Hourly View */
+                                weather.hourly?.map((hour) => {
+                                    const date = new Date(hour.time);
+                                    const timeLabel = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                                    const dayLabel = date.toLocaleDateString([], { weekday: 'short' });
+
+                                    return (
+                                        <div key={hour.time} className="flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors group">
+                                            <div className="flex flex-col w-16">
+                                                <span className="font-bold text-slate-700 uppercase leading-none">{timeLabel}</span>
+                                                <span className="text-[10px] text-slate-400 mt-1">{dayLabel}</span>
+                                            </div>
+                                            <div className="text-slate-400 group-hover:text-amber-500 transition-all">
+                                                {getWeatherIconComponent(hour.conditions, 24)}
+                                            </div>
+                                            <div className="text-right flex flex-col items-end min-w-[3rem]">
+                                                <div className="font-bold text-slate-700 text-lg">{Math.round(hour.tempF)}°</div>
+                                                <div className="flex items-center gap-1 text-[10px] font-medium text-slate-400 mt-0.5">
+                                                    <Wind size={10} /> {Math.round(hour.windMph)} mph
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
                         </div>
                     </div>
 

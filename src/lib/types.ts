@@ -46,6 +46,13 @@ export interface DailyForecast {
   conditions: string;
 }
 
+export interface HourlyForecast {
+  time: string; // ISO String or HH:MM
+  tempF: number;
+  windMph: number;
+  conditions: string;
+}
+
 export interface WeatherData {
   currentTempF: number;
   todayHighF: number;
@@ -54,6 +61,7 @@ export interface WeatherData {
   windGustMph: number;
   conditions: string;
   daily: DailyForecast[];
+  hourly: HourlyForecast[];
   source: string;
   fetchedAt: string;
 }
