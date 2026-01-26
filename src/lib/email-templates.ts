@@ -14,7 +14,7 @@ export function generateSingleResortEmail(data: MountainData): string {
             body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; line-height: 1.5; margin: 0; padding: 0; background-color: #f8fafc; }
             .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
             .header { background-color: #ffffff; padding: 24px; text-align: center; border-bottom: 1px solid #e2e8f0; }
-            .header img { width: 250px; height: auto; margin-bottom: 8px; }
+            .header img { width: 500px; height: auto; margin-bottom: 8px; }
             .header h1 { font-size: 16px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; }
             .content { padding: 32px; }
             .greeting { font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #0f172a; }
@@ -31,7 +31,7 @@ export function generateSingleResortEmail(data: MountainData): string {
     <body>
         <div class="container">
             <div class="header">
-                <img src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png" alt="Logo" width="250" style="width: 250px; height: auto;">
+                <img src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png" alt="Logo" width="500" style="width: 500px; height: auto;">
                 <h1>Valley View Villa</h1>
             </div>
             <div class="content">
