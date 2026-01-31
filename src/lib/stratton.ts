@@ -100,7 +100,7 @@ export async function getStrattonData(): Promise<MountainData> {
                     const rawLifts = terrain.lifts?.details || [];
                     const lifts: LiftCondition[] = rawLifts.map((l: any) => ({
                         name: l.name,
-                        status: l.status === 2 ? 'Open' : 'Closed',
+                        status: (l.status === 1 || l.status === 2) ? 'Open' : 'Closed',
                         type: l.type,
                         waitTime: 0
                     }));

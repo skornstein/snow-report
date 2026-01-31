@@ -137,8 +137,8 @@ export async function getVailResortData(resortId: string): Promise<MountainData>
             }
 
             // Count open
-            const isLiftOpen = (status: any) => status && (String(status).toLowerCase() === 'open' || String(status).toLowerCase() === 'open_priority' || String(status).toLowerCase() === 'scheduled');
-            const isTrailOpen = (t: any) => t.IsOpen === true || (t.Status && (String(t.Status).toLowerCase() === 'open'));
+            const isLiftOpen = (status: any) => status && (String(status).toLowerCase() === 'open' || String(status).toLowerCase() === 'open_priority' || String(status).toLowerCase() === 'scheduled' || String(status) === '1');
+            const isTrailOpen = (t: any) => t.IsOpen === true || (t.Status && (String(t.Status).toLowerCase() === 'open' || String(t.Status) === '1'));
 
             const liftsOpen = lifts.filter((l: any) => isLiftOpen(l.Status)).length;
             const trailsOpen = trails.filter((t: any) => isTrailOpen(t)).length;
