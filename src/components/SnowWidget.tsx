@@ -114,7 +114,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                         >
                             {/* Logo */}
                             <img
-                                src="https://www.valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png"
+                                src="https://i0.wp.com/valleyviewvt.com/wp-content/uploads/2024/10/Valley_View_Villa_Logo_Grey_White_Circle_Transparent_Background-768x635.png"
                                 alt="Valley View Villa"
                                 className="h-12 w-auto"
                             />
