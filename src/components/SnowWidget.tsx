@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MountainData, LiftCondition, TrailCondition } from '@/lib/types';
+import { RESORT_LIST, RESORTS_BY_SLUG } from '@/lib/resorts';
 import { Wind, ChevronDown, ChevronUp, Snowflake, Map as MapIcon, CableCar, Sun, Cloud, CloudSun, CloudRain, CloudSnow, Clock, Ruler, Calendar, Mountain } from 'lucide-react';
 
 export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug?: string }) {
@@ -134,9 +135,9 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                                     value={slug}
                                     onChange={(e) => setSlug(e.target.value)}
                                 >
-                                    <option value="mount-snow">Mount Snow</option>
-                                    <option value="okemo">Okemo</option>
-                                    <option value="stratton">Stratton</option>
+                                    {RESORT_LIST.map(r => (
+                                        <option key={r.slug} value={r.slug}>{r.name}</option>
+                                    ))}
                                 </select>
                                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400 group-hover:text-blue-500 transition-colors">
                                     <ChevronDown size={16} strokeWidth={3} />
@@ -267,11 +268,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                     </div>
                     <div className="mt-3 text-xs font-bold uppercase tracking-wider text-blue-500 hover:text-blue-700 transition-colors">
                         <a
-                            href={
-                                slug === 'okemo' ? "https://www.okemo.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx" :
-                                    slug === 'stratton' ? "https://www.stratton.com/the-mountain/mountain-report" :
-                                        "https://www.mountsnow.com/the-mountain/mountain-conditions/lift-and-terrain-status.aspx"
-                            }
+                            href={RESORTS_BY_SLUG[slug]?.officialUrl ?? RESORTS_BY_SLUG['mount-snow'].officialUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                         >
@@ -549,11 +546,7 @@ function SubscribeModal({ onClose }: { onClose: () => void }) {
                     <div>
                         <label className="block text-xs font-bold uppercase text-slate-500 mb-2">Select Mountains</label>
                         <div className="flex flex-col gap-2 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                            {[
-                                { id: 'mount-snow', label: 'Mount Snow' },
-                                { id: 'okemo', label: 'Okemo' },
-                                { id: 'stratton', label: 'Stratton' }
-                            ].map(resort => (
+                            {RESORT_LIST.map(r => ({ id: r.slug, label: r.name })).map(resort => (
                                 <label key={resort.id} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"

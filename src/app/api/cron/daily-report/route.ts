@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendEmail } from '@/lib/email';
 import { generateSingleResortEmail, generateGenMultiResortEmail } from '@/lib/email-templates';
-import { getVailResortData } from '@/lib/vail-resorts';
-import { getStrattonData } from '@/lib/stratton';
 import { MountainData } from '@/lib/types';
+import { RESORT_LIST } from '@/lib/resorts';
+import { getMountainData } from '@/lib/mountain-data';
 
 export const dynamic = 'force-dynamic'; // Prevent static caching of the cron route
 
@@ -25,17 +25,9 @@ export async function GET(request: Request) {
 
         // 2. Fetch Mountain Data (Parallel)
         console.log('[CRON] Fetching Mountain Data...');
-        const [mountSnow, okemo, stratton] = await Promise.all([
-            getVailResortData('mount-snow').catch(e => null),
-            getVailResortData('okemo').catch(e => null),
-            getStrattonData().catch(e => null)
-        ]);
-
-        const dataMap: Record<string, MountainData | null> = {
-            'mount-snow': mountSnow,
-            'okemo': okemo,
-            'stratton': stratton
-        };
+        const results = await Promise.all(RESORT_LIST.map(r => getMountainData(r.slug).catch(() => null)));
+        const dataMap: Record<string, MountainData | null> =
+            Object.fromEntries(RESORT_LIST.map((r, i) => [r.slug, results[i]]));
 
         // 3. Query Active Subscribers
         // Logic: Find users where today is >= start_date AND today <= end_date

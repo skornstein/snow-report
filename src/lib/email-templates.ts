@@ -1,3 +1,4 @@
+import { resortName } from './resorts';
 import { MountainData } from './types';
 
 // Simple HTML Email Generator
@@ -192,12 +193,7 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
 }
 
 export function generateSubscriptionConfirmationEmail(resorts: string[], startDate: string, endDate: string): string {
-    const resortNames = resorts.map(slug => {
-        if (slug === 'mount-snow') return 'Mount Snow';
-        if (slug === 'okemo') return 'Okemo';
-        if (slug === 'stratton') return 'Stratton';
-        return slug;
-    }).join(', ');
+    const resortNames = resorts.map(resortName).join(', ');
 
     return `
     <!DOCTYPE html>

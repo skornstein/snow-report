@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getVailResortData } from '@/lib/vail-resorts';
-import { getStrattonData } from '@/lib/stratton';
 import { getCachedData } from '@/lib/cache';
+import { RESORTS_BY_SLUG } from '@/lib/resorts';
+import { getMountainData } from '@/lib/mountain-data';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,19 +14,9 @@ export async function GET(request: NextRequest) {
 
     try {
         let data;
-        const cacheKey = `mountain_data_${slug}`;
 
-        data = await getCachedData(cacheKey, CACHE_TTL, async () => {
-            switch (slug) {
-                case 'okemo':
-                    return await getVailResortData('okemo');
-                case 'stratton':
-                    return await getStrattonData();
-                case 'mount-snow':
-                default:
-                    return await getVailResortData('mount-snow');
-            }
-        });
+        const resolved = RESORTS_BY_SLUG[slug] ? slug : 'mount-snow';
+        data = await getCachedData(`mountain_data_${resolved}`, CACHE_TTL, () => getMountainData(resolved));
 
         return NextResponse.json(data);
     } catch (error) {

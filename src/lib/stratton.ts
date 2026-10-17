@@ -1,20 +1,16 @@
-import { MountainData, SnowReport, LiftsTerrain, LiftCondition, TrailCondition } from './types';
+import { MountainData, SnowReport, LiftsTerrain } from './types';
 import { getWeatherData } from './weather';
-import { promisify } from 'util';
-import { exec } from 'child_process';
-import * as cheerio from 'cheerio';
-
-const execAsync = promisify(exec);
+import { fetchOtsResort, otsLiftsTerrain } from './onthesnow';
 
 export async function getStrattonData(): Promise<MountainData> {
     const coords = { lat: 43.1115, long: -72.9081 };
     const otsUrl = 'https://www.onthesnow.com/vermont/stratton-mountain/skireport';
 
     // 1. Parallel Fetch: Weather, Official API, and OTS (for terrain details)
-    const [weather, officialData, otsOutput] = await Promise.all([
+    const [weather, officialData, ots] = await Promise.all([
         getWeatherData(coords.lat, coords.long),
         fetchStrattonOfficialData(),
-        execAsync(`curl -s -L "${otsUrl}" -H "User-Agent: Mozilla/5.0"`).catch(e => ({ stdout: '' }))
+        fetchOtsResort('vermont/stratton-mountain')
     ]);
 
     // 2. Process Snow Report (Prefer Official Data)
@@ -38,7 +34,7 @@ export async function getStrattonData(): Promise<MountainData> {
         console.log(`[Stratton] Used Official API: 24h=${snowReport.snow24hIn}", 48h=${snowReport.snow48hIn}"`);
     }
 
-    // 3. Process Terrain (Use OTS for detailed lists)
+    // 3. Process Terrain (OnTheSnow lift/trail lists; their page format now lives in the RSC payload)
     let liftsTerrain: LiftsTerrain = {
         liftsOpen: 0,
         liftsTotal: 0,
@@ -51,80 +47,19 @@ export async function getStrattonData(): Promise<MountainData> {
         sourceUrl: otsUrl
     };
 
-    if (otsOutput.stdout) {
-        try {
-            const $ = cheerio.load(otsOutput.stdout);
-            const nextDataScript = $('#__NEXT_DATA__').html();
-            if (nextDataScript) {
-                const json = JSON.parse(nextDataScript);
-                const fullResort = json.props?.pageProps?.fullResort;
-
-                if (fullResort) {
-                    const terrain = fullResort.terrain || {};
-                    const runs = terrain.runs || {};
-                    let rawTrails = [];
-
-                    if (Array.isArray(runs)) {
-                        rawTrails = runs;
-                    } else if (runs.details && Array.isArray(runs.details)) {
-                        rawTrails = runs.details;
-                    } else {
-                        rawTrails = Object.values(runs);
-                    }
-
-                    const trails: TrailCondition[] = rawTrails
-                        .filter((t: any) => {
-                            if (!t || !t.name) return false;
-                            const n = t.name.trim();
-                            // Filter logic matches previous implementation
-                            if (n.includes(',') || n.includes('&') || n.includes('Uphill') ||
-                                n.includes('Shortcut') || n.includes('Cut Through') ||
-                                n.includes('Work Road') || n.includes('Access') || n.includes('Extension')) return false;
-
-                            const glades = [
-                                'Emerald Forest', 'Shred Wood Forest', 'Free Fall Gully', 'Kidderbrook Ravine',
-                                'Diamond in the Rough', 'Test Pilot', 'West Pilot', 'Eclipse', 'Moonbeam',
-                                'Vertigo', 'Why Not'
-                            ];
-                            if (glades.includes(n)) return false;
-                            return true;
-                        })
-                        .map((t: any) => ({
-                            name: t.name || 'Unknown',
-                            status: (t.status === 1 || t.status === 'Open') ? 'Open' : 'Closed',
-                            difficulty: mapDifficulty(t.difficulty),
-                            isGroomed: t.grooming
-                        }));
-
-                    // Lifts
-                    const rawLifts = terrain.lifts?.details || [];
-                    const lifts: LiftCondition[] = rawLifts.map((l: any) => ({
-                        name: l.name,
-                        status: (l.status === 1 || l.status === 2) ? 'Open' : 'Closed',
-                        type: l.type,
-                        waitTime: 0
-                    }));
-
-                    // Recalculate counts based on parsed lists
-                    const trailsOpen = trails.filter(t => t.status === 'Open').length;
-                    const liftsOpen = lifts.filter(l => l.status === 'Open').length;
-
-                    liftsTerrain = {
-                        liftsOpen,
-                        liftsTotal: lifts.length,
-                        trailsOpen,
-                        trailsTotal: trails.length,
-                        terrainOpenPct: trails.length > 0 ? Math.round((trailsOpen / trails.length) * 100) : 0,
-                        lifts,
-                        trails,
-                        fetchedAt: new Date().toISOString(),
-                        sourceUrl: otsUrl
-                    };
-                }
-            }
-        } catch (e) {
-            console.error('[Stratton] OTS Parsing failed:', e);
-        }
+    if (ots.resort) {
+        liftsTerrain = otsLiftsTerrain(ots.resort, otsUrl, (n) => {
+            // Filter logic matches previous implementation (connectors, access roads, glades)
+            if (n.includes(',') || n.includes('&') || n.includes('Uphill') ||
+                n.includes('Shortcut') || n.includes('Cut Through') ||
+                n.includes('Work Road') || n.includes('Access') || n.includes('Extension')) return false;
+            const glades = [
+                'Emerald Forest', 'Shred Wood Forest', 'Free Fall Gully', 'Kidderbrook Ravine',
+                'Diamond in the Rough', 'Test Pilot', 'West Pilot', 'Eclipse', 'Moonbeam',
+                'Vertigo', 'Why Not'
+            ];
+            return !glades.includes(n);
+        });
     }
 
     // fallback if official data missing (rare)
@@ -194,16 +129,4 @@ async function fetchStrattonOfficialData(): Promise<{ snow24h: number, snow48h: 
         console.error('[Stratton] Official API fetch failed:', e);
         return null;
     }
-}
-
-function mapDifficulty(diff: number): 'green' | 'blue' | 'black' | 'double_black' | undefined {
-    // OTS Difficulty Mapping (Inferred):
-    // 1: Green, 2: Blue, 3: Black, 4: Double Black? 
-    // Debug showed: "Lower Switchback" (diff 4), "Lower Wanderer" (diff 1), "Shooter" (diff 2).
-    // Let's assume standard progression.
-    if (diff === 1) return 'green';
-    if (diff === 2) return 'blue';
-    if (diff === 3) return 'black';
-    if (diff === 4) return 'double_black';
-    return undefined;
 }
