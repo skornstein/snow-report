@@ -5,6 +5,7 @@ import { generateSingleResortEmail, generateGenMultiResortEmail } from '@/lib/em
 import { MountainData } from '@/lib/types';
 import { RESORT_LIST } from '@/lib/resorts';
 import { getMountainData } from '@/lib/mountain-data';
+import { unsubscribeUrl } from '@/lib/unsubscribe';
 
 export const dynamic = 'force-dynamic'; // Prevent static caching of the cron route
 
@@ -63,7 +64,7 @@ export async function GET(request: Request) {
                     const resortData = dataMap[resortSlug];
 
                     if (resortData) {
-                        const html = generateSingleResortEmail(resortData);
+                        const html = generateSingleResortEmail(resortData, unsubscribeUrl(sub.email));
                         const subject = `🏔️ ${resortData.mountain.name} Report: ${resortData.snowReport.snow24hIn}" New Snow!`;
                         await sendEmail({ to: sub.email, subject, html });
                         sentCount++;
@@ -79,7 +80,7 @@ export async function GET(request: Request) {
                         const names = relevantData.map((d: MountainData) => d.mountain.name).join(', ');
                         const subject = `❄️ Daily Snow Report: ${names}`;
 
-                        const html = generateGenMultiResortEmail(relevantData);
+                        const html = generateGenMultiResortEmail(relevantData, unsubscribeUrl(sub.email));
                         await sendEmail({ to: sub.email, subject, html });
                         sentCount++;
                     }

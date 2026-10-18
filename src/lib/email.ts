@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { unsubscribeUrl } from './unsubscribe';
 
 const resendKey = process.env.RESEND_API_KEY!;
 
@@ -16,6 +17,11 @@ export async function sendEmail({ to, subject, html }: { to: string, subject: st
             to,
             subject,
             html,
+            // RFC 8058 one-click unsubscribe (Gmail/Yahoo bulk-sender requirement); provider POSTs to this URL.
+            headers: {
+                'List-Unsubscribe': `<${unsubscribeUrl(to)}>`,
+                'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            },
         });
 
         if (error) {

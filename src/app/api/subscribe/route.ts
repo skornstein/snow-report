@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { sendEmail } from '@/lib/email';
 import { generateSubscriptionConfirmationEmail } from '@/lib/email-templates';
+import { unsubscribeUrl } from '@/lib/unsubscribe';
 
 export async function POST(request: Request) {
     try {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
 
         // Send Confirmation Email
         try {
-            const html = generateSubscriptionConfirmationEmail(resorts, startDate, endDate);
+            const html = generateSubscriptionConfirmationEmail(resorts, startDate, endDate, unsubscribeUrl(email));
             await sendEmail({
                 to: email,
                 subject: 'Valley View Villa: Snow Report',

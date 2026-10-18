@@ -1,6 +1,10 @@
 import { resortName } from './resorts';
 import { MountainData } from './types';
 
+// Footer link; & must be escaped inside an HTML attribute.
+const unsubscribeLink = (url: string) =>
+    `<a href="${url.replace(/&/g, '&amp;')}" style="color: #94a3b8;">Unsubscribe</a>`;
+
 // Booking prompt shown above the footer of the daily report emails (UTM-tagged so GA4 can attribute bookings interest).
 const STAY_CTA = `
             <div style="margin: 0 32px 28px; padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 8px; text-align: center; background-color: #f8fafc;">
@@ -12,7 +16,7 @@ const STAY_CTA = `
 // Simple HTML Email Generator
 // In a production app, we might use React Email, but string interpolation works fine for this structure.
 
-export function generateSingleResortEmail(data: MountainData): string {
+export function generateSingleResortEmail(data: MountainData, unsubscribeUrl: string): string {
     const { mountain, snowReport, weather, liftsTerrain } = data;
 
     return `
@@ -82,7 +86,7 @@ export function generateSingleResortEmail(data: MountainData): string {
             ${STAY_CTA}
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>
-                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+                ${unsubscribeLink(unsubscribeUrl)}
             </div>
         </div>
     </body>
@@ -90,7 +94,7 @@ export function generateSingleResortEmail(data: MountainData): string {
     `;
 }
 
-export function generateGenMultiResortEmail(resorts: MountainData[]): string {
+export function generateGenMultiResortEmail(resorts: MountainData[], unsubscribeUrl: string): string {
     // Neutral Sort (Alphabetical)
     const sorted = [...resorts].sort((a, b) => a.mountain.name.localeCompare(b.mountain.name));
 
@@ -194,7 +198,7 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
             ${STAY_CTA}
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>
-                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+                ${unsubscribeLink(unsubscribeUrl)}
             </div>
         </div>
     </body>
@@ -202,7 +206,7 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
     `;
 }
 
-export function generateSubscriptionConfirmationEmail(resorts: string[], startDate: string, endDate: string): string {
+export function generateSubscriptionConfirmationEmail(resorts: string[], startDate: string, endDate: string, unsubscribeUrl: string): string {
     const resortNames = resorts.map(resortName).join(', ');
 
     return `
@@ -251,7 +255,7 @@ export function generateSubscriptionConfirmationEmail(resorts: string[], startDa
             </div>
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>
-                <a href="#" style="color: #94a3b8;">Unsubscribe</a>
+                ${unsubscribeLink(unsubscribeUrl)}
             </div>
         </div>
     </body>
