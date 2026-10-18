@@ -10,7 +10,7 @@ export interface ResortInfo {
     officialUrl: string;            // "View Official Report" link
     source: ResortSource;
     coords: { lat: number; long: number };
-    otsPath?: string;               // onthesnow.com/<otsPath>/skireport
+    otsPath?: string;               // onthesnow.com/<otsPath>/skireport (data for onthesnow resorts; season dates for all)
     driveMin: number;               // approx. drive from Valley View Villa (OSRM routing)
 }
 
@@ -19,7 +19,7 @@ export const RESORT_LIST: ResortInfo[] = [
     {
         slug: 'mount-snow', name: 'Mount Snow', location: 'West Dover, VT', source: 'vail', driveMin: 5,
         officialUrl: 'https://www.mountsnow.com/the-mountain/mountain-conditions/lift-and-terrain-status.aspx',
-        coords: { lat: 42.9602, long: -72.8958 },
+        coords: { lat: 42.9602, long: -72.8958 }, otsPath: 'vermont/mount-snow',
     },
     {
         slug: 'stratton', name: 'Stratton', location: 'Stratton, VT', source: 'stratton', driveMin: 38,
@@ -44,7 +44,7 @@ export const RESORT_LIST: ResortInfo[] = [
     {
         slug: 'okemo', name: 'Okemo', location: 'Ludlow, VT', source: 'vail', driveMin: 80,
         officialUrl: 'https://www.okemo.com/the-mountain/mountain-conditions/snow-and-weather-report.aspx',
-        coords: { lat: 43.4036, long: -72.7163 },
+        coords: { lat: 43.4036, long: -72.7163 }, otsPath: 'vermont/okemo-mountain-resort',
     },
 ];
 

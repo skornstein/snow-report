@@ -1,6 +1,14 @@
 import { resortName } from './resorts';
 import { MountainData } from './types';
 
+// Booking prompt shown above the footer of the daily report emails (UTM-tagged so GA4 can attribute bookings interest).
+const STAY_CTA = `
+            <div style="margin: 0 32px 28px; padding: 18px 20px; border: 1px solid #e2e8f0; border-radius: 8px; text-align: center; background-color: #f8fafc;">
+                <div style="font-size: 15px; font-weight: 700; color: #0f172a;">Staying near the lifts?</div>
+                <div style="font-size: 14px; color: #475569; margin-top: 4px;">Valley View Villa is 5 minutes from Mount Snow and sleeps 16.</div>
+                <a href="https://www.valleyviewvt.com/?utm_source=snow-report-email&amp;utm_medium=email&amp;utm_campaign=daily-snow-report" style="display: inline-block; margin-top: 12px; background-color: #0A84FF; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 14px;">Check availability</a>
+            </div>`;
+
 // Simple HTML Email Generator
 // In a production app, we might use React Email, but string interpolation works fine for this structure.
 
@@ -71,6 +79,7 @@ export function generateSingleResortEmail(data: MountainData): string {
                     <a href="${mountain.url}" class="btn">View Full Report</a>
                 </div>
             </div>
+            ${STAY_CTA}
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>
                 <a href="#" style="color: #94a3b8;">Unsubscribe</a>
@@ -182,6 +191,7 @@ export function generateGenMultiResortEmail(resorts: MountainData[]): string {
                 `}).join('')}
 
             </div>
+            ${STAY_CTA}
             <div class="footer">
                 Sent with 💙 from Valley View Villa<br>
                 <a href="#" style="color: #94a3b8;">Unsubscribe</a>

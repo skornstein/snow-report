@@ -1,4 +1,4 @@
-import { MountainData, SnowReport, LiftsTerrain, LiftCondition, TrailCondition } from './types';
+import { MountainData, SnowReport, LiftsTerrain, LiftCondition, TrailCondition, SeasonInfo } from './types';
 import { getWeatherData } from './weather';
 import { ResortInfo } from './resorts';
 import { promisify } from 'util';
@@ -146,6 +146,18 @@ export function otsSnowReport(r: OtsResort, sourceUrl: string): SnowReport {
     };
 }
 
+// OnTheSnow "projected" dates are occasionally wrong (e.g. a 2027 opening for the 2026-27 season),
+// so drop any opening date that falls after closing or more than 150 days out.
+export function otsSeason(r: OtsResort): SeasonInfo {
+    const today = new Date().toISOString().slice(0, 10);
+    const horizon = new Date(Date.now() + 150 * 864e5).toISOString().slice(0, 10);
+    let opening = r.status?.openingDate || null;
+    const closing = r.status?.closingDate || null;
+    if (opening && ((closing && opening > closing) || opening > horizon)) opening = null;
+    const isOpen = r.status?.openFlag === 1 || (r.terrain?.lifts?.open ?? 0) > 0;
+    return { openingDate: opening && opening >= today ? opening : (isOpen ? null : opening), closingDate: closing, isOpen, source: 'OnTheSnow (projected)' };
+}
+
 export function buildSummary(name: string, snow: SnowReport, lt: LiftsTerrain, predictedIn: number): string {
     return `The current ${name} base depth is ${Math.round(snow.baseDepthIn.max)} inches, with ${Math.round(snow.snow24hIn)} new inches of snow over the past 24 hours and ${Math.round(predictedIn)} inches predicted today and tomorrow. ${lt.trailsOpen}/${lt.trailsTotal} trails are open, ${lt.liftsOpen}/${lt.liftsTotal} lifts are open, and ${lt.terrainOpenPct}% of the total terrain is open.`;
 }
@@ -170,6 +182,7 @@ export async function getOnTheSnowResortData(info: ResortInfo): Promise<Mountain
         snowReport, liftsTerrain, weather,
         summary: buildSummary(info.name, snowReport, liftsTerrain, predicted),
         generatedAt: new Date().toISOString(),
+        season: ots.resort ? otsSeason(ots.resort) : undefined,
     };
 }
 

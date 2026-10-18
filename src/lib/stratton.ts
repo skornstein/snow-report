@@ -1,6 +1,6 @@
 import { MountainData, SnowReport, LiftsTerrain } from './types';
 import { getWeatherData } from './weather';
-import { fetchOtsResort, otsLiftsTerrain } from './onthesnow';
+import { fetchOtsResort, otsLiftsTerrain, otsSeason } from './onthesnow';
 
 export async function getStrattonData(): Promise<MountainData> {
     const coords = { lat: 43.1115, long: -72.9081 };
@@ -83,7 +83,8 @@ export async function getStrattonData(): Promise<MountainData> {
         weather,
         liftsTerrain,
         summary,
-        generatedAt: new Date().toISOString()
+        generatedAt: new Date().toISOString(),
+        season: ots.resort ? otsSeason(ots.resort) : undefined
     };
 }
 

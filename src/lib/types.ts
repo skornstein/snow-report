@@ -66,6 +66,13 @@ export interface WeatherData {
   fetchedAt: string;
 }
 
+export interface SeasonInfo {
+  openingDate: string | null; // projected or confirmed, YYYY-MM-DD (null when missing or implausible)
+  closingDate: string | null;
+  isOpen: boolean;
+  source: string;
+}
+
 export interface MountainData {
   mountain: {
     slug: string;
@@ -79,4 +86,5 @@ export interface MountainData {
   weather: WeatherData;
   summary: string;
   generatedAt: string;
+  season?: SeasonInfo;
 }
