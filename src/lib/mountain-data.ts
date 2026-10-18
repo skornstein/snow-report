@@ -8,6 +8,17 @@ import { getOnTheSnowResortData, fetchOtsResort, otsSeason } from './onthesnow';
 export async function getMountainData(slug: string): Promise<MountainData> {
     const info = RESORTS_BY_SLUG[slug];
     if (!info) throw new Error(`Unknown resort: ${slug}`);
+    const data = await collect(slug);
+    // A resort-announced opening date beats OnTheSnow's projection.
+    const a = info.announcedOpening;
+    if (a && data.season && !data.season.isOpen && a.date >= new Date().toISOString().slice(0, 10)) {
+        data.season = { ...data.season, openingDate: a.date, source: `Resort announcement: ${a.source}`, projected: false };
+    }
+    return data;
+}
+
+async function collect(slug: string): Promise<MountainData> {
+    const info = RESORTS_BY_SLUG[slug];
     switch (info.source) {
         case 'vail': {
             const [data, ots] = await Promise.all([

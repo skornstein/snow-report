@@ -12,6 +12,8 @@ export interface ResortInfo {
     coords: { lat: number; long: number };
     otsPath?: string;               // onthesnow.com/<otsPath>/skireport (data for onthesnow resorts; season dates for all)
     driveMin: number;               // approx. drive from Valley View Villa (OSRM routing)
+    // Opening date the resort itself has announced; overrides OnTheSnow's projection. Update as resorts announce.
+    announcedOpening?: { date: string; source: string };
 }
 
 // Ordered by drive time from the villa, which is also the dropdown order.
@@ -25,11 +27,13 @@ export const RESORT_LIST: ResortInfo[] = [
         slug: 'stratton', name: 'Stratton', location: 'Stratton, VT', source: 'stratton', driveMin: 38,
         officialUrl: 'https://www.stratton.com/the-mountain/mountain-report',
         coords: { lat: 43.1115, long: -72.9081 }, otsPath: 'vermont/stratton-mountain',
+        announcedOpening: { date: '2026-11-25', source: 'stratton.com/things-to-do/events/opening-day (checked 2026-10-17)' },
     },
     {
         slug: 'bromley', name: 'Bromley', location: 'Peru, VT', source: 'onthesnow', driveMin: 56,
         officialUrl: 'https://www.bromley.com/snow-report',
         coords: { lat: 43.2134, long: -72.9378 }, otsPath: 'vermont/bromley-mountain',
+        announcedOpening: { date: '2026-11-27', source: 'bromley.com/events + skivermont.com/opening-dates (checked 2026-10-17)' },
     },
     {
         slug: 'magic-mountain', name: 'Magic Mountain', location: 'Londonderry, VT', source: 'onthesnow', driveMin: 56,

@@ -71,6 +71,7 @@ export interface SeasonInfo {
   closingDate: string | null;
   isOpen: boolean;
   source: string;
+  projected: boolean; // true = OnTheSnow projection, false = date announced by the resort
 }
 
 export interface MountainData {

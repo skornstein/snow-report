@@ -155,7 +155,7 @@ export function otsSeason(r: OtsResort): SeasonInfo {
     const closing = r.status?.closingDate || null;
     if (opening && ((closing && opening > closing) || opening > horizon)) opening = null;
     const isOpen = r.status?.openFlag === 1 || (r.terrain?.lifts?.open ?? 0) > 0;
-    return { openingDate: opening && opening >= today ? opening : (isOpen ? null : opening), closingDate: closing, isOpen, source: 'OnTheSnow (projected)' };
+    return { openingDate: opening && opening >= today ? opening : (isOpen ? null : opening), closingDate: closing, isOpen, source: 'OnTheSnow (projected)', projected: true };
 }
 
 export function buildSummary(name: string, snow: SnowReport, lt: LiftsTerrain, predictedIn: number): string {
