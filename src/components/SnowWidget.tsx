@@ -127,7 +127,7 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                             </div>
                         </a>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center justify-center gap-3">
                             {/* Mountain Selector */}
                             <div className="relative group">
                                 <select
@@ -143,6 +143,14 @@ export default function SnowWidget({ defaultSlug = 'mount-snow' }: { defaultSlug
                                     <ChevronDown size={16} strokeWidth={3} />
                                 </div>
                             </div>
+                            {/* Jump to the server-rendered 6-resort comparison table on valleyviewvt.com/snow-report/ */}
+                            <a
+                                href="https://www.valleyviewvt.com/snow-report/#snow-conditions"
+                                target="_top"
+                                className="bg-white border-2 border-slate-200 hover:border-blue-400 text-slate-700 hover:text-blue-600 text-sm font-bold py-2 px-4 rounded-lg transition-colors shadow-sm"
+                            >
+                                Compare all 6
+                            </a>
                             <button
                                 onClick={() => setShowSubscribe(true)}
                                 className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition-colors shadow-sm flex items-center gap-2"
